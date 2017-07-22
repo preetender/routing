@@ -3,7 +3,7 @@
     "type" : "library",
     "description":"defina rotas de maneira simples...",
     "keywords": [],
-    "license" : "MIT"
+    "license" : "MIT",
     "authors": [
         {
             "name": "Cesar Augusto",
