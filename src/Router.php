@@ -28,7 +28,8 @@ class Router implements RouterVerbs
      */
     public function __construct()
     {
-        $this->url = $_SERVER['PATH_INFO'];
+        /** Remover querystring da URL */
+        $this->url = strtok($_SERVER['REQUEST_URI'], '?');
     }
 
     /**
@@ -94,7 +95,9 @@ class Router implements RouterVerbs
      */
     public function getRoutes()
     {
-        return $this->routes;
+        echo '<pre>';
+        print_r( $this->routes  );
+        echo '</pre>';
     }
 
     /**
