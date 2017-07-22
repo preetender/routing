@@ -1,6 +1,6 @@
 # routing
 
-Sistema de Rotas simples, utilizando apenas PHP!
+Sistema de Rotas simples...
 
 $router = new \Preetender\Routing\Router();
 
