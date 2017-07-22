@@ -8,7 +8,8 @@
     ],
     "autoload": {
         "psr-4" : {
-            "Preetender\\Routing\\" : "src/"
+            "Preetender\\Routing\\" : "src/",
+            "App\\" : "app/"
         }
     }
 }
