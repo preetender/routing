@@ -1,17 +1,19 @@
 {
     "name": "preetender/routing",
+    "type" : "library",
     "description":"defina rotas de maneira simples...",
+    "keywords": [],
+    "license" : "MIT"
     "authors": [
         {
             "name": "Cesar Augusto",
             "email": "cesinhagutierres@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4" : {
-            "Preetender\\Routing\\" : "src/",
-            "App\\" : "app/"
+            "Preetender\\Routing\\" : "src/"
         }
-    }
+    },
+    "minimum-stability": "dev",
 }
