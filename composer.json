@@ -1,11 +1,13 @@
 {
     "name": "preetender/routing",
+    "description":"defina rotas de maneira simples...",
     "authors": [
         {
             "name": "Cesar Augusto",
             "email": "cesinhagutierres@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4" : {
             "Preetender\\Routing\\" : "src/",
