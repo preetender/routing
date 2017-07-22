@@ -1,0 +1,14 @@
+{
+    "name": "preetender/routing",
+    "authors": [
+        {
+            "name": "Cesar Augusto",
+            "email": "cesinhagutierres@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4" : {
+            "Preetender\\Routing\\" : "src/"
+        }
+    }
+}
