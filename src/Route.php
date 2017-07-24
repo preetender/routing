@@ -2,6 +2,11 @@
 
 namespace Preetender\Routing;
 
+use Preetender\Routing\Webservice\JsonRenderer;
+use Preetender\Routing\Webservice\TextPlainRenderer;
+use Preetender\Routing\Webservice\Webservice;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Class Route
  * @package Preetender\Routing
@@ -22,14 +27,30 @@ class Route
     private $matches = [];
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var string
+     */
+    protected $response_type;
+
+    /** @var  */
+    protected $execute;
+
+    /**
      * Route constructor.
      * @param $url
      * @param $callable
+     * @param string $response_type
      */
-    public function __construct($url, $callable)
+    public function __construct($url, $callable, $response_type = 'json')
     {
         $this->url = trim($url, '/');
         $this->callable = $callable;
+        $this->request = Request::createFromGlobals();
+        $this->response_type = $response_type;
     }
 
     /**
@@ -51,6 +72,8 @@ class Route
     }
 
     /**
+     * Obtem url.
+     *
      * @return string
      */
     public function getUrl(): string
@@ -59,6 +82,8 @@ class Route
     }
 
     /**
+     * Obtem callback.
+     *
      * @return mixed
      */
     public function getCallable()
@@ -67,16 +92,21 @@ class Route
     }
 
     /**
+     * Obtem parametros.
+     *
      * @return array
      */
     public function getMatches(): array
     {
-        return $this->matches;
+        return array_merge($this->matches, [
+            $this->request->query
+        ]);
     }
 
     /**
      * Caso seja um controlador.
      *
+     * @return mixed
      */
     private function prepareController()
     {
@@ -88,19 +118,43 @@ class Route
     }
 
     /**
-     * Executa rota.
+     * Verifica tipo de chamada e solicita tratamento para a execução.
      *
      * @return mixed
      */
     public function run()
     {
         if( is_string( $this->getCallable() ) ) {
-            return $this->prepareController();
+            $this->execute = $this->prepareController();
         }
+
 
         if( is_callable( $this->getCallable() ) ) {
-            return call_user_func_array($this->callable, $this->matches);
+            $this->execute = call_user_func_array($this->callable, $this->getMatches());
         }
+
+        $this->formatAndRespond();
     }
 
+    /**
+     * Observa retorno e formata com auxilio da classe Webservice..
+     *
+     * @return mixed
+     */
+    protected function formatAndRespond()
+    {
+        $ws = new Webservice( $this->execute );
+
+        $decorator = null;
+
+        if( is_string( $this->execute) ) {
+            $decorator = new TextPlainRenderer( $ws, $this->request);
+        }
+
+        if( is_array( $this->execute) ) {
+            $decorator = new JsonRenderer( $ws, $this->request);
+        }
+
+        $decorator->render();
+    }
 }

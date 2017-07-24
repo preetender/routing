@@ -1,5 +1,9 @@
 {
     "name": "preetender/routing",
+    "type" : "library",
+    "description":"defina rotas de maneira simples...",
+    "keywords": [],
+    "license" : "MIT",
     "authors": [
         {
             "name": "Cesar Augusto",
@@ -8,8 +12,11 @@
     ],
     "autoload": {
         "psr-4" : {
-            "Preetender\\Routing\\" : "src/",
-            "App\\" : "app/"
+            "Preetender\\Routing\\" : "src/"
         }
-    }
+    },
+    "require": {
+        "symfony/http-foundation": "^3.3"
+    },
+    "minimum-stability": "dev"
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace Preetender\Routing;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Route
@@ -66,6 +68,45 @@ class Router implements RouterVerbs
     }
 
     /**
+     * Rotear chamadas PUT
+     *
+     * @param $path
+     * @param $callable
+     * @return Route
+     */
+    public function put($path, $callable)
+    {
+        $route = $this->register($path, $callable, 'PUT');
+        return $route;
+    }
+
+    /**
+     * Rotear chamadas PATCH
+     *
+     * @param $path
+     * @param $callable
+     * @return Route
+     */
+    public function patch($path, $callable)
+    {
+        $route = $this->register($path, $callable, 'PATCH');
+        return $route;
+    }
+
+    /**
+     * Rotear chamadas DELETE
+     *
+     * @param $path
+     * @param $callable
+     * @return Route
+     */
+    public function delete($path, $callable)
+    {
+        $route = $this->register($path, $callable, 'DELETE');
+        return $route;
+    }
+
+    /**
      * Registrar rota.
      *
      * @param $path
@@ -96,7 +137,7 @@ class Router implements RouterVerbs
     public function getRoutes()
     {
         echo '<pre>';
-        print_r( $this->routes  );
+            print_r( $this->routes  );
         echo '</pre>';
     }
 
