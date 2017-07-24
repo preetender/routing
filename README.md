@@ -44,7 +44,7 @@ Para rotear uma chamada é importante informar o `$path` e o `$callback`, o `$pa
  $router->get('users/:id', function($id){ return compact('id') });
  ```
  
- E para que tudo aconteça basta acionar o método `run()`
+ E para que tudo aconteça basta acionar o método `run`
  
  ```sh
   $router->run();
