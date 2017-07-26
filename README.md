@@ -1,4 +1,6 @@
-# preetender/routing
+# Roteamento Simples
+
+Instalção via Composer ``` composer require preetender/routing```
 
 Inscreva rotas de forma simples..
 
