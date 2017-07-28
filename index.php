@@ -17,9 +17,9 @@ $router->get('/', function() {
     return 'hello get';
 });
 
-//$router->get('/:id', function($id) {
-//    return 'hello get  '. $id;
-//});
+$router->get('/:id', function($id) {
+   return 'hello get  '. $id;
+});
 
 $router->get('/test', 'App\\TestController@index');
 
