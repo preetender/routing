@@ -2,9 +2,8 @@
 
 namespace Preetender\Routing;
 
-use Preetender\Routing\Webservice\JsonRenderer;
-use Preetender\Routing\Webservice\TextPlainRenderer;
-use Preetender\Routing\Webservice\Webservice;
+use Preetender\Routing\Response\JsonRenderer;
+use Preetender\Routing\Response\TextPlainRenderer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -16,25 +15,14 @@ class Route
     /** @var string */
     protected $url;
 
-    /**
-     * @var
-     */
+    /** @var  */
     protected $callable;
 
-    /**
-     * @var array
-     */
-    private $matches = [];
+    /** @var array  */
+    private $params = [];
 
-    /**
-     * @var Request
-     */
+    /** @var Request  */
     protected $request;
-
-    /**
-     * @var string
-     */
-    protected $response_type;
 
     /** @var  */
     protected $execute;
@@ -43,18 +31,16 @@ class Route
      * Route constructor.
      * @param $url
      * @param $callable
-     * @param string $response_type
      */
-    public function __construct($url, $callable, $response_type = 'json')
+    public function __construct($url, $callable)
     {
         $this->url = trim($url, '/');
         $this->callable = $callable;
         $this->request = Request::createFromGlobals();
-        $this->response_type = $response_type;
     }
 
     /**
-     * Verifica path e cria parametros caso exista.
+     * Check the path, if there are parameters to create attributes for the scope of the request
      *
      * @param $url
      * @return bool
@@ -67,12 +53,12 @@ class Route
             return false;
         }
         array_shift($matches);
-        $this->matches = $matches;
+        $this->params = $matches;
         return true;
     }
 
     /**
-     * Obtem url.
+     * Get url.
      *
      * @return string
      */
@@ -82,7 +68,7 @@ class Route
     }
 
     /**
-     * Obtem callback.
+     * Get callback.
      *
      * @return mixed
      */
@@ -92,33 +78,28 @@ class Route
     }
 
     /**
-     * Obtem parametros.
+     * Get params.
      *
      * @return array
      */
-    public function getMatches(): array
+    public function getParams(): array
     {
-        return array_merge($this->matches, [
-            $this->request->query
-        ]);
+        return array_merge($this->params, [ $this->request ]);
     }
 
     /**
-     * Caso seja um controlador.
+     * Prepares controller to be run
      *
      * @return mixed
      */
     private function prepareController()
     {
-        $controller = explode('@', $this->getCallable());
-        $class = $controller[0];
-        $method = $controller[1];
-
-        return call_user_func_array([$class, $method], $this->getMatches());
+        RouteController::format( $this->getCallable() );
+        return call_user_func_array( [ RouteController::getClass(), RouteController::getMethod()], $this->getParams() );
     }
 
     /**
-     * Verifica tipo de chamada e solicita tratamento para a execução.
+     * Check the type of request and define which treatment it should receive
      *
      * @return mixed
      */
@@ -128,22 +109,21 @@ class Route
             $this->execute = $this->prepareController();
         }
 
-
         if( is_callable( $this->getCallable() ) ) {
-            $this->execute = call_user_func_array($this->callable, $this->getMatches());
+            $this->execute = call_user_func_array( $this->callable, $this->getParams() );
         }
 
-        $this->formatAndRespond();
+        return $this->formatAndRespond();
     }
 
     /**
-     * Observa retorno e formata com auxilio da classe Webservice..
+     * Gets the lock return and returns with the due response
      *
      * @return mixed
      */
     protected function formatAndRespond()
     {
-        $ws = new Webservice( $this->execute );
+        $ws = new RouteResponse( $this->execute );
 
         $decorator = null;
 
@@ -155,6 +135,6 @@ class Route
             $decorator = new JsonRenderer( $ws, $this->request);
         }
 
-        $decorator->render();
+        return $decorator->render();
     }
 }

@@ -1,6 +1,7 @@
 .idea/
 public/
 app/
-tests
+tests/
+.travis.yml
 vendor
 composer.lock

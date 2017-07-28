@@ -1,15 +1,15 @@
 <?php
 
-namespace Preetender\Routing\Webservice;
+namespace Preetender\Routing\Contracts;
 
 /**
  * Interface Renderable
- * @package Preetender\Routing\Webservice
+ * @package Preetender\Routing\Contracts
  */
 interface Renderable
 {
     /**
-     * Formatar resposta e emiti-la ao solicitante.
+     * Format and return to requester.
      *
      * @return mixed
      */

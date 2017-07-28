@@ -1,6 +1,8 @@
 <?php
 
-namespace Preetender\Routing;
+namespace Preetender\Routing\Contracts;
+
+use Preetender\Routing\Route;
 
 /**
  * Interface RouterVerbs
@@ -9,7 +11,7 @@ namespace Preetender\Routing;
 interface RouterVerbs
 {
     /**
-     * Rotear requisição via GET
+     * Routing GET call
      *
      * @param $path
      * @param $callable
@@ -18,7 +20,7 @@ interface RouterVerbs
     public function get($path, $callable);
 
     /**
-     * Rotear requisição via POST
+     * Routing POST call
      *
      * @param $path
      * @param $callable
@@ -27,7 +29,7 @@ interface RouterVerbs
     public function post($path, $callable);
 
     /**
-     * Rotear chamadas PUT
+     * Routing PUT call
      *
      * @param $path
      * @param $callable
@@ -35,9 +37,8 @@ interface RouterVerbs
      */
     public function put($path, $callable);
 
-
     /**
-     * Rotear chamadas PATCH
+     * Routing PATCH call
      *
      * @param $path
      * @param $callable
@@ -45,9 +46,8 @@ interface RouterVerbs
      */
     public function patch($path, $callable);
 
-
     /**
-     * Rotear chamadas DELETE
+     * Routing DELETE call
      *
      * @param $path
      * @param $callable

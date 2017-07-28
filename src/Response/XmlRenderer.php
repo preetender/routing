@@ -1,24 +1,22 @@
 <?php
 
-namespace Preetender\Routing\Webservice;
-
-use Symfony\Component\HttpFoundation\Request;
+namespace Preetender\Routing\Response;
 
 /**
  * Class XmlRenderer
- * @package Preetender\Routing\Webservice
+ * @package Preetender\Routing\Response
  */
-class XmlRenderer extends ToRender
+class XmlRenderer extends Formatter
 {
     /**
-     * Informar cabeçalhos para requisições XML.
+     * Inform headers for xml requests
      *
      * @var array
      */
     protected $headers = [];
 
     /**
-     * Formatar resposta e emiti-la ao solicitante.
+     * Format and return to requester
      *
      * @return mixed
      */

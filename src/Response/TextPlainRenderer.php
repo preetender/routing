@@ -1,19 +1,24 @@
 <?php
 
-namespace Preetender\Routing\Webservice;
+namespace Preetender\Routing\Response;
 
 /**
  * Class TextPlainRenderer
- * @package Preetender\Routing\Webservice
+ * @package Preetender\Routing\Response
  */
-class TextPlainRenderer extends ToRender
+class TextPlainRenderer extends Formatter
 {
+    /**
+     * Inform headers for text requests
+     *
+     * @var array
+     */
     protected $headers = [
         'Content-type' => 'text/plain'
     ];
 
     /**
-     * Formatar resposta e emiti-la ao solicitante.
+     * Format and return to requester
      *
      * @return mixed
      */

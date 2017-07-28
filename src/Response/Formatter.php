@@ -1,36 +1,32 @@
 <?php
 
-namespace Preetender\Routing\Webservice;
+namespace Preetender\Routing\Response;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Preetender\Routing\Contracts\Renderable;
 
 /**
- * Class ToRender
- * @package Preetender\Routing\Webservice
+ * Class Formatter
+ * @package Preetender\Routing\Response
  */
-abstract class ToRender implements Renderable
+abstract class Formatter implements Renderable
 {
-    /**
-     * @var Renderable
-     */
+    /** @var Renderable */
     protected $wrapped;
 
     /** @var array  */
     protected $headers = [];
 
-    /**
-     * @var Response
-     */
+    /** @var Response  */
     protected $response;
 
-    /**
-     * @var Request
-     */
+    /** @var Request */
     protected $request;
 
     /**
-     * ToRender constructor.
+     * Formatter constructor.
+     *
      * @param Renderable $renderer
      * @param Request $request
      */

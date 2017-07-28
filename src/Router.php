@@ -1,8 +1,10 @@
 <?php
 
 namespace Preetender\Routing;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+
+use Preetender\Routing\Contracts\RouterVerbs;
+use Preetender\Routing\Exceptions\MethodNotAllowedException;
+use Preetender\Routing\Exceptions\UnregisteredRouteException;
 
 /**
  * Class Route
@@ -10,39 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Router implements RouterVerbs
 {
-    /**
-     * @var string
-     */
-    protected $url;
+    /** @var array  */
+    protected $routeStack = [];
 
     /**
-     * @var
-     */
-    protected $method;
-
-    /**
-     * @var array
-     */
-    protected $routes = [];
-
-    /**
-     * Router constructor.
-     */
-    public function __construct()
-    {
-        /** Remover querystring da URL */
-        $this->url = strtok($_SERVER['REQUEST_URI'], '?');
-    }
-
-    /**
-     * Obtem metodo resiquisato.
-     *
-     * @return string
-     */
-    protected static function method() : string { return $_SERVER['REQUEST_METHOD']; }
-
-    /**
-     * Rotear requisição via GET
+     * Routing GET call
      *
      * @param $path
      * @param $callable
@@ -50,12 +24,11 @@ class Router implements RouterVerbs
      */
     public function get($path, $callable)
     {
-        $route = $this->register($path, $callable);
-        return $route;
+        return $this->addRoute($path, $callable);
     }
 
     /**
-     * Rotear requisição via POST
+     * Routing POST call
      *
      * @param $path
      * @param $callable
@@ -63,12 +36,11 @@ class Router implements RouterVerbs
      */
     public function post($path, $callable)
     {
-        $route = $this->register($path, $callable, 'POST');
-        return $route;
+        return $this->addRoute($path, $callable, 'POST');
     }
 
     /**
-     * Rotear chamadas PUT
+     * Routing PUT call
      *
      * @param $path
      * @param $callable
@@ -76,12 +48,11 @@ class Router implements RouterVerbs
      */
     public function put($path, $callable)
     {
-        $route = $this->register($path, $callable, 'PUT');
-        return $route;
+        return $this->addRoute($path, $callable, 'PUT');
     }
 
     /**
-     * Rotear chamadas PATCH
+     * Routing PATCH call
      *
      * @param $path
      * @param $callable
@@ -89,12 +60,11 @@ class Router implements RouterVerbs
      */
     public function patch($path, $callable)
     {
-        $route = $this->register($path, $callable, 'PATCH');
-        return $route;
+        return $this->addRoute($path, $callable, 'PATCH');
     }
 
     /**
-     * Rotear chamadas DELETE
+     * Routing DELETE call
      *
      * @param $path
      * @param $callable
@@ -102,68 +72,99 @@ class Router implements RouterVerbs
      */
     public function delete($path, $callable)
     {
-        $route = $this->register($path, $callable, 'DELETE');
-        return $route;
+        return $this->addRoute($path, $callable, 'DELETE');
     }
 
     /**
-     * Registrar rota.
+     * Obtem metodo resiquisato.
+     *
+     * @return string
+     */
+    protected function method() : string
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
+     * Get url request and delete queryString
+     * @return string
+     */
+    protected function uri() : string
+    {
+        return strtok( $_SERVER['REQUEST_URI'], '?');
+    }
+
+    /**
+     * Check if call contains png,jpg,jpeg,gif,css,js
+     *
+     * @return mixed
+     */
+    protected function hasRouteValid()
+    {
+        return preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"]);
+    }
+
+    /**
+     * To check for potential problems before running
+     * @return bool
+     * @throws MethodNotAllowedException
+     */
+    protected function checkCommonProblems()
+    {
+         if( static::hasRouteValid() ) {
+            return false;
+        }
+
+        if( empty( $this->routeStack) )
+        {
+            throw new \InvalidArgumentException('Routing empty');
+        }
+
+        if( !isset( $this->routeStack[static::method()] ) ){
+            throw new MethodNotAllowedException('Requested method was not scaled.');
+        }
+        return true;
+    }
+
+    /**
+     * Register route
      *
      * @param $path
      * @param $callable
      * @param string $method
      * @return Route
      */
-    protected function register($path, $callable, $method = 'GET')
+    protected function addRoute($path, $callable, $method = 'GET')
     {
-        return $this->routes[$method][] = new Route($path, $callable);
+        return $this->routeStack[$method][] = new Route($path, $callable);
     }
 
     /**
-     * Verificar se solicitação é do tipo Arquivo..
-     *
+     * Obtain the requested method in the call and create the requested route.
      * @return mixed
+     * @throws UnregisteredRouteException
      */
-    protected static function hasRouteValid()
+    protected function executeRoute()
     {
-        return preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"]);
-    }
-
-    /**
-     * Obtem lista de rotas.
-     *
-     * @return array
-     */
-    public function getRoutes()
-    {
-        echo '<pre>';
-            print_r( $this->routes  );
-        echo '</pre>';
-    }
-
-    /**
-     * Dispacha rota sinalizada na requisição.
-     *
-     * @return mixed
-     */
-    public function run()
-    {
-
-        if( static::hasRouteValid() ){
-            return false;
-        }
-
-        if( !isset( $this->routes[static::method()] ) ){
-            die('metodo não executavel');
-        }
-
-        foreach ($this->routes[static::method()] as $route) {
+        foreach ($this->routeStack[static::method()] as $route) {
             /** @var $route Route */
-            if( $route->match( $this->url) ){
+            if( $route->match( $this->uri() ) ) {
                 return $route->run();
             }
         }
+        throw new UnregisteredRouteException('Unregistered route ');
+    }
 
-        die('rota não identificada!');
+    /**
+     * Execute
+     *
+     * @return bool|mixed
+     * @throws MethodNotAllowedException
+     */
+    public function run()
+    {
+        $this->checkCommonProblems();
+
+        return $this->executeRoute();
     }
 }

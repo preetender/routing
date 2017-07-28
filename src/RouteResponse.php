@@ -1,18 +1,20 @@
 <?php
 
-namespace Preetender\Routing\Webservice;
+namespace Preetender\Routing;
+
+use Preetender\Routing\Contracts\Renderable;
 
 /**
- * Class Webservice
- * @package Preetender\Routing\Webservice
+ * Class RouteResponse
+ * @package Preetender\Routing
  */
-class Webservice implements Renderable
+class RouteResponse implements Renderable
 {
     /** @var */
     protected $data;
 
     /**
-     * Webservice constructor.
+     * RouteResponse constructor.
      * @param $data
      */
     public function __construct($data)
@@ -21,7 +23,7 @@ class Webservice implements Renderable
     }
 
     /**
-     * Formatar resposta e emiti-la ao solicitante.
+     * Format and return to requester
      *
      * @return mixed
      */
