@@ -1,5 +1,22 @@
 # Roteamento Simples
 
+> Estado da Aplicação
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/preetender/routing/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/preetender/routing/?branch=master)
+[![Code Climate](https://codeclimate.com/github/preetender/routing/badges/gpa.svg)](https://codeclimate.com/github/preetender/routing)
+[![Build Status](https://travis-ci.org/preetender/routing.svg?branch=master)](https://travis-ci.org/preetender/routing)
+
+> Estatísticas
+
+[![Total Downloads](https://poser.pugx.org/preetender/routing/downloads)](https://packagist.org/packages/preetender/routing)
+[![Daily Downloads](https://poser.pugx.org/preetender/routing/d/daily)](https://packagist.org/packages/preetender/routing)
+[![Monthly Downloads](https://poser.pugx.org/preetender/routing/d/monthly)](https://packagist.org/packages/preetender/routing)
+
+> Lincença
+
+[![License](https://poser.pugx.org/preetender/routing/license)](https://packagist.org/packages/preetender/routing)
+
+
 Instalção via Composer ``` composer require preetender/routing```
 
 Inscreva rotas de forma simples..
