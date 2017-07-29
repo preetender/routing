@@ -12,6 +12,7 @@ class RouteController
     protected static $param = [];
 
     /**
+     * Format string and split into layers
      * @param $param
      * @return mixed
      */
@@ -21,7 +22,7 @@ class RouteController
     }
 
     /**
-     * Retorna namespace da classe
+     * Return class name
      *
      * @return string
      */
@@ -31,7 +32,7 @@ class RouteController
     }
 
     /**
-     * Retorna nome do metodo
+     * Retorna method name
      *
      * @return string
      */
