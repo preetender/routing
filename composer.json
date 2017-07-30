@@ -10,13 +10,13 @@
             "email": "cesinhagutierres@gmail.com"
         }
     ],
+    "require": {
+        "symfony/http-foundation": "^3.3"
+    },
     "autoload": {
         "psr-4" : {
             "Preetender\\Routing\\" : "src/"
         }
-    },
-    "require": {
-        "symfony/http-foundation": "^3.3"
     },
     "minimum-stability": "dev"
 }
