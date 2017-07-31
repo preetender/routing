@@ -120,13 +120,13 @@ class Router implements RouterVerbs
      */
     protected function checkCommonProblems()
     {
-        if(static::hasRouteValid()) {
+        if(self::hasRouteValid()) {
             return false;
         }
         if(empty( $this->routeStack)) {
             throw new \InvalidArgumentException('Routing empty');
         }
-        if(!isset($this->routeStack[static::method()])) {
+        if(!isset($this->routeStack[self::method()])) {
             throw new MethodNotAllowedException('Requested method was not scaled.');
         }
         return true;
@@ -158,9 +158,9 @@ class Router implements RouterVerbs
      */
     protected function executeRoute()
     {
-        foreach ($this->routeStack[static::method()] as $key => $route) {
+        foreach ($this->routeStack[self::method()] as $key => $route) {
             /** @var $route Route */
-            if($route->extractParameters(static::uri())) {
+            if($route->extractParameters(self::uri())) {
                 return $route->run();
             }
         }

@@ -4,6 +4,7 @@ namespace Preetender\Routing;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Preetender\Routing\Response\ExecuteResponse;
 
 /**
  * Class Route
@@ -198,5 +199,29 @@ class Route
             return  $this->handleRequestController();
         }
         return $this->handleRequestCallable();
+    }
+    /**
+     * ...
+     *
+     * @return mixed
+     */
+    protected function handleRequestCallable()
+    {
+        self::createReflection(new \ReflectionFunction($this->getCallable()));
+        $call = call_user_func_array($this->getCallable(), self::resolveParameters());
+        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
+    }
+
+    /**
+     * ...
+     *
+     * @return mixed
+     */
+    protected function handleRequestController()
+    {
+        $attributes = RouteController::prepare($this->getCallable());
+        self::createReflection(new \ReflectionClass($attributes['class']), $attributes['method']);
+        $call = call_user_func_array([$attributes['class'], $attributes['method']], self::resolveParameters());
+        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
     }
 }

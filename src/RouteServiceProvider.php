@@ -26,7 +26,8 @@ class RouteServiceProvider extends AbstractServiceProvider
      */
     public function register()
     {
-        $this->getContainer()->add(Request::class, Request::createFromGlobals());
-        $this->getContainer()->add(Response::class, new Response());
+        $container = $this->getContainer();
+        $container->add(Request::class, Request::createFromGlobals());
+        $container->add(Response::class, new Response());
     }
 }

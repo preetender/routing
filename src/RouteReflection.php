@@ -1,8 +1,8 @@
 <?php
 
 namespace Preetender\Routing;
+
 use League\Container\Exception\ContainerException;
-use Preetender\Routing\Response\ExecuteResponse;
 
 /**
  * Trait RouteReflection
@@ -20,38 +20,15 @@ trait RouteReflection
     protected static $resolveMethodName = null;
 
     /**
-     * ...
-     *
-     * @return mixed
-     */
-    protected function handleRequestCallable()
-    {
-        self::createReflection(new \ReflectionFunction($this->getCallable()));
-        $call = call_user_func_array($this->getCallable(), self::resolveParameters());
-        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
-    }
-
-    /**
-     * ...
-     *
-     * @return mixed
-     */
-    protected function handleRequestController()
-    {
-        $attributes = RouteController::prepare($this->getCallable());
-        self::createReflection(new \ReflectionClass($attributes['class']), $attributes['method']);
-        $call = call_user_func_array([$attributes['class'], $attributes['method']], self::resolveParameters());
-        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
-    }
-
-    /**
      * @param object $object
-     * @param string $method
+     * @param string|null $method
      */
     protected static function createReflection($object, string $method = null)
     {
         self::$reflectionObject = $object;
-        self::$resolveMethodName = $method;
+        if($method) {
+            self::$resolveMethodName = $method;
+        }
     }
 
     /**
