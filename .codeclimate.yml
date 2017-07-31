@@ -1,29 +1,22 @@
 engines:
   duplication:
+    config:
+      languages:
+        - php
     enabled: true
-      config:
-        languages:
-          - php
   fixme:
     enabled: true
   phpmd:
+    checks:
+      CleanCode/StaticAccess:
+        enabled: false
+      Controversial/Superglobals:
+        enabled: false
+      UnusedPrivateMethod:
+        enabled: false
     enabled: true
-      checks:
-        Controversial/Superglobals:
-          enabled: false
-        CleanCode/StaticAccess:
-          enabled: false
-        UnusedPrivateMethod:
-          enabled: false
-ratings:
-    paths:
-      - "**.php"
-<<<<<<< HEAD
-+exclude_paths:
-+- tests/
-
-
-=======
 exclude_paths:
   - tests/
->>>>>>> 7f65e2fcac89a4a3a02414b91278561139120363
+ratings:
+  paths:
+    - "**.php"
