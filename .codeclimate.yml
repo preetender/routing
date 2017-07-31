@@ -1,0 +1,24 @@
+engines:
+  duplication:
+    enabled: true
+      config:
+        languages:
+          - php
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+      checks:
+        Controversial/Superglobals:
+          enabled: false
+        CleanCode/StaticAccess:
+          enabled: false
+        UnusedPrivateMethod:
+          enabled: false
+ratings:
+    paths:
+      - "**.php"
++exclude_paths:
++- tests/
+
+

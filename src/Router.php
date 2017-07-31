@@ -158,7 +158,7 @@ class Router implements RouterVerbs
      */
     protected function executeRoute()
     {
-        foreach ($this->routeStack[self::method()] as $key => $route) {
+        foreach ($this->routeStack[self::method()] as $route) {
             /** @var $route Route */
             if($route->extractParameters(self::uri())) {
                 return $route->run();
