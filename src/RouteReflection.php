@@ -26,9 +26,9 @@ trait RouteReflection
      */
     protected function handleRequestCallable()
     {
-        static::createReflection(new \ReflectionFunction($this->getCallable()));
-        $call = call_user_func_array($this->callable, static::resolveParameters());
-        return ExecuteResponse::factory($call, $this->request, $this->response);
+        self::createReflection(new \ReflectionFunction($this->getCallable()));
+        $call = call_user_func_array($this->getCallable(), self::resolveParameters());
+        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
     }
 
     /**
@@ -39,28 +39,28 @@ trait RouteReflection
     protected function handleRequestController()
     {
         $attributes = RouteController::prepare($this->getCallable());
-        static::createReflection(new \ReflectionClass($attributes['class']), $attributes['method']);
-        $call = call_user_func_array([$attributes['class'], $attributes['method']], static::resolveParameters());
-        return ExecuteResponse::factory($call, $this->request, $this->response);
+        self::createReflection(new \ReflectionClass($attributes['class']), $attributes['method']);
+        $call = call_user_func_array([$attributes['class'], $attributes['method']], self::resolveParameters());
+        return ExecuteResponse::factory($call, $this->getRequest(), $this->getResponse());
     }
 
     /**
      * @param object $object
-     * @param string|null $method
+     * @param string $method
      */
     protected static function createReflection($object, string $method = null)
     {
-        static::$reflectionObject = $object;
-        static::$resolveMethodName = $method;
+        self::$reflectionObject = $object;
+        self::$resolveMethodName = $method;
     }
 
     /**
      * @param int $position
-     * @return mixed
+     * @return int
      */
     protected static function getPointersAndReturnRequired(int $position)
     {
-        return static::$parameters[ array_flip( static::$numberOfParameters)[$position] ];
+        return self::$parameters[ array_flip( self::$numberOfParameters)[$position] ];
     }
 
     /**
@@ -70,17 +70,17 @@ trait RouteReflection
     protected static function resolveParameters()
     {
         $attributes = [];
-        $parameters = static::getParametersObject();
+        $parameters = self::getParametersObject();
         if(count($parameters) > 0) {
             foreach ($parameters as $parameter) {
                 /** @var \ReflectionParameter $parameter */
                 if(!$parameter->getClass()) {
-                    static::$numberOfParameters[] = $parameter->getPosition();
-                    $attributes[$parameter->getPosition()] = static::getPointersAndReturnRequired($parameter->getPosition());
+                    self::$numberOfParameters[] = $parameter->getPosition();
+                    $attributes[$parameter->getPosition()] = self::getPointersAndReturnRequired($parameter->getPosition());
                     continue;
                 }
                 $className = $parameter->getClass()->getName();
-                if(static::checkClassRegisterContainer($className)) {
+                if(self::checkClassRegisterContainer($className)) {
                     $attributes[$parameter->getPosition()] = Kernel::getContainer()->get($className);
                 }
             }
@@ -109,12 +109,12 @@ trait RouteReflection
      */
     protected static function getParametersObject()
     {
-        if( static::$reflectionObject instanceof \ReflectionClass) {
-            $method = static::$reflectionObject->getMethod( static::$resolveMethodName );
+        if( self::$reflectionObject instanceof \ReflectionClass) {
+            $method = self::$reflectionObject->getMethod(self::$resolveMethodName);
             return $method->getParameters();
         }
-        if ( static::$reflectionObject instanceof \ReflectionFunction) {
-            return static::$reflectionObject->getParameters();
+        if ( self::$reflectionObject instanceof \ReflectionFunction) {
+            return self::$reflectionObject->getParameters();
         }
     }
 }

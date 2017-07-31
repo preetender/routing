@@ -6,16 +6,14 @@ namespace Preetender\Routing\Response;
  * Class TextPlainResponse
  * @package Preetender\Routing\Response
  */
-class TextPlainResponse extends BaseResponse
+final class TextPlainResponse extends BaseResponse
 {
     /**
      * Inform headers for text requests
      *
      * @var array
      */
-    protected $headers = [
-//        'Content-type' => 'text/plain'
-    ];
+    protected $headers = [];
 
     /**
      * Format and return to requester

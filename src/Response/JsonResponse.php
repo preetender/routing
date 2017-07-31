@@ -6,7 +6,7 @@ namespace Preetender\Routing\Response;
  * Class JsonResponse
  * @package Preetender\Routing\Response
  */
-class JsonResponse extends BaseResponse
+final class JsonResponse extends BaseResponse
 {
     /**
      * Inform headers for json requests

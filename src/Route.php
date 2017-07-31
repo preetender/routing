@@ -66,7 +66,7 @@ class Route
             return false;
         }
         array_shift($matches);
-        static::$parameters = $matches;
+        self::$parameters = $matches;
         return true;
     }
 
@@ -77,8 +77,8 @@ class Route
      * @return string
      */
     private function attributesMatch($match) {
-        if(isset(static::$attributes[$match[1]])) {
-            return '(' . static::$attributes[$match[1]] . ')';
+        if(isset(self::$attributes[$match[1]])) {
+            return '(' . self::$attributes[$match[1]] . ')';
         }
         return '([^/]+)';
     }
@@ -120,7 +120,7 @@ class Route
      */
     public static function getParameters(): array
     {
-        return static::$parameters;
+        return self::$parameters;
     }
 
     /**
@@ -134,8 +134,28 @@ class Route
            'name' => $this->getName(),
            'path' => $this->getUrl(),
            'callable' => $this->getCallable(),
-           'parameters' => static::resolveParameters()
+           'parameters' => self::resolveParameters()
         ];
+    }
+
+    /**
+     * Get request
+     *
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+       return $this->request;
+    }
+
+    /**
+     * Get reponse
+     *
+     * @return Response
+     */
+    public function getResponse(): Response
+    {
+       return $this->response;
     }
 
     /**
@@ -163,7 +183,7 @@ class Route
      */
     public function with(string $attribute, string $regex)
     {
-        static::$attributes[$attribute] = str_replace('(', '(?:', $regex);
+        self::$attributes[$attribute] = str_replace('(', '(?:', $regex);
         return $this;
     }
 

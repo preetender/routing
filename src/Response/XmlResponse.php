@@ -6,7 +6,7 @@ namespace Preetender\Routing\Response;
  * Class XmlResponse
  * @package Preetender\Routing\Response
  */
-class XmlResponse extends BaseResponse
+final class XmlResponse extends BaseResponse
 {
     /**
      * Inform headers for xml requests

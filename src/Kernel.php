@@ -20,20 +20,11 @@ final class Kernel
      */
     public static function getContainer(): Container
     {
-        if( null === static::$instance) {
+        if( null === self::$instance) {
             $container = new Container();
             $container->addServiceProvider(new RouteServiceProvider());
-            static::$instance = $container;
+            self::$instance = $container;
         }
-        return static::$instance;
+        return self::$instance;
     }
-
-    /** @inheritdoc */
-    private function __construct() {}
-
-    /** @inheritdoc */
-    private function __clone() {}
-
-    /** @inheritdoc */
-    private function __wakeup() {}
 }

@@ -42,12 +42,12 @@ class RouteController
     }
 
     /**
-     * @param $param
+     * @param string $param
      * @return array
      */
-    public static function prepare($param)
+    public static function prepare(string $param)
     {
-        $format = static::format($param);
+        static::format($param);
         return [
             'class' => RouteController::getClass(),
             'method' => RouteController::getMethod()
