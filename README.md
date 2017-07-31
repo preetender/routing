@@ -3,6 +3,7 @@
 > Estado da Aplicação
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/preetender/routing/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/preetender/routing/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/preetender/routing/badge.svg?branch=master)](https://coveralls.io/github/preetender/routing?branch=master)
 [![Code Climate](https://codeclimate.com/github/preetender/routing/badges/gpa.svg)](https://codeclimate.com/github/preetender/routing)
 [![Build Status](https://travis-ci.org/preetender/routing.svg?branch=master)](https://travis-ci.org/preetender/routing)
 
