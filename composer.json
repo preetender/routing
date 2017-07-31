@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "league/container": "^3.0",
+        "league/container": "^2.0",
         "illuminate/http": "^5.4",
         "illuminate/support": "^5.4"
     },
