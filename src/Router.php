@@ -2,6 +2,7 @@
 
 namespace Preetender\Routing;
 
+use Illuminate\Http\Response;
 use Preetender\Routing\Contracts\RouterVerbs;
 use Preetender\Routing\Exceptions\MethodNotAllowedException;
 use Preetender\Routing\Exceptions\UnregisteredRouteException;
@@ -15,16 +16,20 @@ class Router implements RouterVerbs
     /** @var array  */
     protected $routeStack = [];
 
+    /** @var array  */
+    protected $routesGroupByName = [];
+
     /**
      * Routing GET call
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function get($path, $callable)
+    public function get($path, $callable, $name = null)
     {
-        return $this->addRoute($path, $callable);
+        return $this->addRoute($path, $callable, 'GET', $name);
     }
 
     /**
@@ -32,11 +37,12 @@ class Router implements RouterVerbs
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function post($path, $callable)
+    public function post($path, $callable, $name = null)
     {
-        return $this->addRoute($path, $callable, 'POST');
+        return $this->addRoute($path, $callable, 'POST', $name);
     }
 
     /**
@@ -44,11 +50,12 @@ class Router implements RouterVerbs
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function put($path, $callable)
+    public function put($path, $callable, $name = null)
     {
-        return $this->addRoute($path, $callable, 'PUT');
+        return $this->addRoute($path, $callable, 'PUT', $name);
     }
 
     /**
@@ -56,11 +63,12 @@ class Router implements RouterVerbs
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function patch($path, $callable)
+    public function patch($path, $callable, $name = null)
     {
-        return $this->addRoute($path, $callable, 'PATCH');
+        return $this->addRoute($path, $callable, 'PATCH', $name);
     }
 
     /**
@@ -68,11 +76,12 @@ class Router implements RouterVerbs
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function delete($path, $callable)
+    public function delete($path, $callable, $name = null)
     {
-        return $this->addRoute($path, $callable, 'DELETE');
+        return $this->addRoute($path, $callable, 'DELETE', $name);
     }
 
     /**
@@ -91,7 +100,7 @@ class Router implements RouterVerbs
      */
     protected function uri() : string
     {
-        return strtok( $_SERVER['REQUEST_URI'], '?');
+        return trim(strtok( $_SERVER['REQUEST_URI'], '?'), '/');
     }
 
     /**
@@ -111,16 +120,13 @@ class Router implements RouterVerbs
      */
     protected function checkCommonProblems()
     {
-         if( static::hasRouteValid() ) {
+        if(static::hasRouteValid()) {
             return false;
         }
-
-        if( empty( $this->routeStack) )
-        {
+        if(empty( $this->routeStack)) {
             throw new \InvalidArgumentException('Routing empty');
         }
-
-        if( !isset( $this->routeStack[static::method()] ) ){
+        if(!isset($this->routeStack[static::method()])) {
             throw new MethodNotAllowedException('Requested method was not scaled.');
         }
         return true;
@@ -132,11 +138,17 @@ class Router implements RouterVerbs
      * @param $path
      * @param $callable
      * @param string $method
+     * @param null $name
      * @return Route
      */
-    protected function addRoute($path, $callable, $method = 'GET')
+    protected function addRoute($path, $callable, $method = 'GET', $name = null)
     {
-        return $this->routeStack[$method][] = new Route($path, $callable);
+        $route = new Route($path, $callable);
+        $this->routeStack[$method][] = $route;
+        if($name) {
+            $this->routesGroupByName[$name] = $route;
+        }
+        return $route;
     }
 
     /**
@@ -146,13 +158,31 @@ class Router implements RouterVerbs
      */
     protected function executeRoute()
     {
-        foreach ($this->routeStack[static::method()] as $route) {
+        foreach ($this->routeStack[static::method()] as $key => $route) {
             /** @var $route Route */
-            if( $route->match( $this->uri() ) ) {
+            if($route->extractParameters(static::uri())) {
                 return $route->run();
             }
         }
         throw new UnregisteredRouteException('Unregistered route ');
+    }
+
+    /**
+     * ... go to route by name
+     *
+     * @param $name
+     * @param array $params
+     * @return mixed
+     * @throws UnregisteredRouteException
+     */
+    public function goUrl($name, $params = [])
+    {
+        if(!isset($this->routesGroupByName[$name])) {
+            throw new UnregisteredRouteException('Unregistered route by name ' . $name);
+        }
+        /** @var Route $route */
+        $route = $this->routesGroupByName[$name];
+        return $route->requestUrlCall($params);
     }
 
     /**

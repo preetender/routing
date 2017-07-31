@@ -1,6 +1,6 @@
 language: php
 
-php:    
+php:
  - 7.0
 
 before_script:

@@ -3,10 +3,10 @@
 namespace Preetender\Routing\Response;
 
 /**
- * Class XmlRenderer
+ * Class XmlResponse
  * @package Preetender\Routing\Response
  */
-class XmlRenderer extends Formatter
+class XmlResponse extends BaseResponse
 {
     /**
      * Inform headers for xml requests
@@ -25,9 +25,9 @@ class XmlRenderer extends Formatter
 
         $data_format = $this->wrapped->render();
 
-        $this->response->setContent( $data_format );
-        $this->response->headers->add( $this->headers );
-        $this->response->prepare( $this->request );
+        $this->response->setContent($data_format);
+        $this->response->headers->add($this->headers);
+        $this->response->prepare($this->request);
         $this->response->send();
     }
 }

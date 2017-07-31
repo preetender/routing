@@ -15,43 +15,48 @@ interface RouterVerbs
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function get($path, $callable);
+    public function get($path, $callable, $name = null);
 
     /**
      * Routing POST call
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function post($path, $callable);
+    public function post($path, $callable, $name = null);
 
     /**
      * Routing PUT call
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function put($path, $callable);
+    public function put($path, $callable, $name = null);
 
     /**
      * Routing PATCH call
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function patch($path, $callable);
+    public function patch($path, $callable, $name = null);
 
     /**
      * Routing DELETE call
      *
      * @param $path
      * @param $callable
+     * @param null $name
      * @return Route
      */
-    public function delete($path, $callable);
+    public function delete($path, $callable, $name = null);
 }

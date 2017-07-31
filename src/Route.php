@@ -2,9 +2,8 @@
 
 namespace Preetender\Routing;
 
-use Preetender\Routing\Response\JsonRenderer;
-use Preetender\Routing\Response\TextPlainRenderer;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 /**
  * Class Route
@@ -12,31 +11,45 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Route
 {
+    use RouteReflection;
+
     /** @var string */
     protected $url;
 
     /** @var  */
     protected $callable;
 
+    /** @var   */
+    protected $name;
+
     /** @var array  */
-    private $params = [];
+    private static $parameters = [];
+
+    /** @var array  */
+    private static $attributes = [];
 
     /** @var Request  */
     protected $request;
 
+    /** @var  Response */
+    protected $response;
+
     /** @var  */
-    protected $execute;
+    protected $running;
 
     /**
      * Route constructor.
      * @param $url
      * @param $callable
+     * @param null $name
      */
-    public function __construct($url, $callable)
+    public function __construct($url, $callable, $name = null)
     {
         $this->url = trim($url, '/');
         $this->callable = $callable;
-        $this->request = Request::createFromGlobals();
+        $this->request = Kernel::getContainer()->get(Request::class);
+        $this->response = Kernel::getContainer()->get(Response::class);
+        $this->name = $name;
     }
 
     /**
@@ -45,16 +58,29 @@ class Route
      * @param $url
      * @return bool
      */
-    public function match($url){
+    public function extractParameters($url)
+    {
         $url = trim($url, '/');
-        $path = preg_replace('#:([\w]+)#', '([^/]+)', $this->getUrl());
-        $regex = "#^$path$#i";
-        if(!preg_match($regex, $url, $matches)){
+        $path = preg_replace_callback('#:([\w]+)#', [$this, 'attributesMatch'], $this->getUrl());
+        if(!preg_match("#^$path$#i", $url, $matches)) {
             return false;
         }
         array_shift($matches);
-        $this->params = $matches;
+        static::$parameters = $matches;
         return true;
+    }
+
+    /**
+     * ...
+     *
+     * @param $match
+     * @return string
+     */
+    private function attributesMatch($match) {
+        if(isset(static::$attributes[$match[1]])) {
+            return '(' . static::$attributes[$match[1]] . ')';
+        }
+        return '([^/]+)';
     }
 
     /**
@@ -65,6 +91,16 @@ class Route
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    /**
+     * Get name route
+     *
+     * @return null|string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -82,20 +118,53 @@ class Route
      *
      * @return array
      */
-    public function getParams(): array
+    public static function getParameters(): array
     {
-        return array_merge($this->params, [ $this->request ]);
+        return static::$parameters;
     }
 
     /**
-     * Prepares controller to be run
+     * Get properties on route
      *
+     * @return array
+     */
+    public function getRoute()
+    {
+        return [
+           'name' => $this->getName(),
+           'path' => $this->getUrl(),
+           'callable' => $this->getCallable(),
+           'parameters' => static::resolveParameters()
+        ];
+    }
+
+    /**
+     * Executing route
+     *
+     * @param array $parameters
      * @return mixed
      */
-    private function prepareController()
+    public function requestUrlCall($parameters = [])
     {
-        RouteController::format( $this->getCallable() );
-        return call_user_func_array( [ RouteController::getClass(), RouteController::getMethod()], $this->getParams() );
+        $path = $this->getUrl();
+        foreach ($parameters as $key => $value) {
+            $path = str_replace(":$key", $value, $path);
+        }
+        $this->extractParameters($path);
+        return $this->run();
+    }
+
+    /**
+     * Exporta para o controlador uma coleção de dados;
+     *
+     * @param string $attribute
+     * @param string $regex
+     * @return $this
+     */
+    public function with(string $attribute, string $regex)
+    {
+        static::$attributes[$attribute] = str_replace('(', '(?:', $regex);
+        return $this;
     }
 
     /**
@@ -105,36 +174,9 @@ class Route
      */
     public function run()
     {
-        if( is_string( $this->getCallable() ) ) {
-            $this->execute = $this->prepareController();
+        if(is_string($this->getCallable())) {
+            return  $this->handleRequestController();
         }
-
-        if( is_callable( $this->getCallable() ) ) {
-            $this->execute = call_user_func_array( $this->callable, $this->getParams() );
-        }
-
-        return $this->formatAndRespond();
-    }
-
-    /**
-     * Gets the lock return and returns with the due response
-     *
-     * @return mixed
-     */
-    protected function formatAndRespond()
-    {
-        $ws = new RouteResponse( $this->execute );
-
-        $decorator = null;
-
-        if( is_string( $this->execute) ) {
-            $decorator = new TextPlainRenderer( $ws, $this->request);
-        }
-
-        if( is_array( $this->execute) ) {
-            $decorator = new JsonRenderer( $ws, $this->request);
-        }
-
-        return $decorator->render();
+        return $this->handleRequestCallable();
     }
 }

@@ -3,10 +3,10 @@
 namespace Preetender\Routing\Response;
 
 /**
- * Class JsonRenderer
+ * Class JsonResponse
  * @package Preetender\Routing\Response
  */
-class JsonRenderer extends Formatter
+class JsonResponse extends BaseResponse
 {
     /**
      * Inform headers for json requests
@@ -24,9 +24,9 @@ class JsonRenderer extends Formatter
      */
     public function render()
     {
-        $this->response->setContent( json_encode( $this->wrapped->render() ) );
-        $this->response->headers->add( $this->headers );
-        $this->response->prepare( $this->request );
+        $this->response->setContent(json_encode($this->wrapped->render()));
+        $this->response->headers->add($this->headers);
+        $this->response->prepare($this->request);
         $this->response->send();
     }
 }

@@ -3,10 +3,10 @@
 namespace Preetender\Routing\Response;
 
 /**
- * Class TextPlainRenderer
+ * Class TextPlainResponse
  * @package Preetender\Routing\Response
  */
-class TextPlainRenderer extends Formatter
+class TextPlainResponse extends BaseResponse
 {
     /**
      * Inform headers for text requests
@@ -14,7 +14,7 @@ class TextPlainRenderer extends Formatter
      * @var array
      */
     protected $headers = [
-        'Content-type' => 'text/plain'
+//        'Content-type' => 'text/plain'
     ];
 
     /**
@@ -24,9 +24,9 @@ class TextPlainRenderer extends Formatter
      */
     public function render()
     {
-        $this->response->setContent( $this->wrapped->render() );
-        $this->response->headers->add( $this->headers );
-        $this->response->prepare( $this->request );
+        $this->response->setContent($this->wrapped->render());
+        $this->response->headers->add($this->headers);
+        $this->response->prepare($this->request);
         $this->response->send();
     }
 }
