@@ -18,7 +18,12 @@ engines:
 ratings:
     paths:
       - "**.php"
+<<<<<<< HEAD
 +exclude_paths:
 +- tests/
 
 
+=======
+exclude_paths:
+  - tests/
+>>>>>>> 7f65e2fcac89a4a3a02414b91278561139120363
